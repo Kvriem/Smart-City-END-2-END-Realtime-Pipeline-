@@ -77,7 +77,7 @@ services:
       - ./jobs:/opt/bitnami/spark/jobs
     command: bin/spark-class org.apache.spark.deploy.master.Master
     ports:
-      - "9090:9090"
+      - "9090:8080"
       - "7077:7077"
     networks:
       - datamasterylab
