@@ -15,7 +15,7 @@ export function useWebSocket() {
   const ws = useRef<WebSocket | null>(null)
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-  const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8000/ws'
+  const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8000/ws/realtime'
 
   const connect = useCallback(() => {
     if (ws.current?.readyState === WebSocket.OPEN) {
