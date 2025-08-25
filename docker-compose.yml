@@ -91,6 +91,25 @@ services:
   # spark-worker-4:
   #   <<: *spark-common
 
+  # Phase 1: Real-time Layer - Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - datamasterylab
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  redis_data:
 
 networks:
   datamasterylab:
