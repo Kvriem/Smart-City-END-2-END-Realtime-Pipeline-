@@ -108,6 +108,28 @@ services:
       timeout: 5s
       retries: 5
 
+  # Phase 1: Real-time API Layer
+  smartcity-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: smartcity-api
+    ports:
+      - "8000:8000"
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    networks:
+      - datamasterylab
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
 volumes:
   redis_data:
 
