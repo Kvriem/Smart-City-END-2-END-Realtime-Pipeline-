@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Direct Test</title>
+</head>
+<body>
+    <h1>WebSocket Direct Browser Test</h1>
+    <div id="status">Disconnected</div>
+    <button onclick="connect()">Connect</button>
+    <button onclick="disconnect()">Disconnect</button>
+    <div id="messages"></div>
+
+    <script>
+        let ws = null;
+        const statusDiv = document.getElementById('status');
+        const messagesDiv = document.getElementById('messages');
+
+        function updateStatus(status) {
+            statusDiv.textContent = status;
+            console.log('Status:', status);
+        }
+
+        function addMessage(message) {
+            const div = document.createElement('div');
+            div.textContent = new Date().toLocaleTimeString() + ': ' + message;
+            messagesDiv.appendChild(div);
+            console.log('Message:', message);
+        }
+
+        function connect() {
+            const url = 'ws://127.0.0.1:8000/ws/realtime';
+            console.log('Attempting to connect to:', url);
+            updateStatus('Connecting...');
+            
+            try {
+                ws = new WebSocket(url);
+                
+                ws.onopen = function(event) {
+                    console.log('WebSocket opened:', event);
+                    updateStatus('Connected');
+                    addMessage('Connected successfully!');
+                };
+                
+                ws.onmessage = function(event) {
+                    console.log('Message received:', event.data);
+                    addMessage('Received: ' + event.data);
+                };
+                
+                ws.onclose = function(event) {
+                    console.log('WebSocket closed:', event);
+                    updateStatus('Disconnected');
+                    addMessage('Disconnected: Code=' + event.code + ', Reason=' + event.reason);
+                };
+                
+                ws.onerror = function(error) {
+                    console.error('WebSocket error:', error);
+                    updateStatus('Error');
+                    addMessage('Error occurred');
+                };
+                
+            } catch (error) {
+                console.error('Failed to create WebSocket:', error);
+                updateStatus('Error');
+                addMessage('Failed to create connection: ' + error.message);
+            }
+        }
+
+        function disconnect() {
+            if (ws) {
+                ws.close();
+                ws = null;
+            }
+        }
+
+        // Auto-connect on page load
+        window.onload = function() {
+            console.log('Page loaded, attempting auto-connect...');
+            connect();
+        };
+    </script>
+</body>
+</html>

@@ -19,6 +19,13 @@ from contextlib import asynccontextmanager
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Custom JSON encoder for datetime objects
+class DateTimeEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime):
+            return obj.isoformat()
+        return super().default(obj)
+
 # Pydantic models for API responses
 class VehicleLocation(BaseModel):
     vehicle_id: str
@@ -124,22 +131,9 @@ class ConnectionManager:
 
     async def broadcast(self, data: dict):
         """Broadcast data to all connected clients"""
-        if not self.active_connections:
-            return
-        
-        message = json.dumps(data)
-        disconnected = []
-        
-        for connection in self.active_connections:
-            try:
-                await connection.send_text(message)
-            except Exception as e:
-                logger.warning(f"Failed to send to WebSocket: {e}")
-                disconnected.append(connection)
-        
-        # Remove disconnected clients
-        for connection in disconnected:
-            self.disconnect(connection)
+        logger.info(f"🔕 Broadcast called but disabled for debugging")
+        logger.info(f"🔍 Data that would be broadcast: {data}")
+        return
 
 # Global managers
 redis_manager = RedisManager()
@@ -153,13 +147,14 @@ async def lifespan(app: FastAPI):
     await redis_manager.connect()
     
     # Start background task for real-time updates
-    task = asyncio.create_task(real_time_broadcaster())
+    # task = asyncio.create_task(real_time_broadcaster())  # Temporarily disabled for debugging
+    logger.info("📡 Real-time broadcaster temporarily disabled for debugging")
     
     yield
     
     # Shutdown
     logger.info("🔄 Shutting down Smart City API Layer...")
-    task.cancel()
+    # task.cancel()  # Commented out since task is not created
 
 # Create FastAPI app
 app = FastAPI(
@@ -181,24 +176,8 @@ app.add_middleware(
 # Background task for real-time broadcasting
 async def real_time_broadcaster():
     """Background task to broadcast real-time updates"""
-    while True:
-        try:
-            if websocket_manager.active_connections:
-                # Get fresh data every 5 seconds
-                analytics = await get_city_analytics()
-                if analytics:
-                    await websocket_manager.broadcast({
-                        "type": "city_analytics",
-                        "data": analytics.dict(),
-                        "timestamp": datetime.now().isoformat()
-                    })
-            
-            await asyncio.sleep(5)
-        except asyncio.CancelledError:
-            break
-        except Exception as e:
-            logger.error(f"Broadcasting error: {e}")
-            await asyncio.sleep(10)
+    logger.info("🔕 Real-time broadcaster function disabled for debugging")
+    return
 
 # API Endpoints
 

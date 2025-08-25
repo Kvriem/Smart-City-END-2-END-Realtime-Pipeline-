@@ -15,20 +15,47 @@ export function useWebSocket() {
   const ws = useRef<WebSocket | null>(null)
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-  const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8000/ws/realtime'
+  // Force localhost IP address instead of hostname
+  const wsUrl = 'ws://127.0.0.1:8000/ws/realtime'
 
   const connect = useCallback(() => {
+    console.log('🔌 WebSocket connect called')
+    console.log('📍 WebSocket URL:', wsUrl)
+    
     if (ws.current?.readyState === WebSocket.OPEN) {
+      console.log('✅ WebSocket already open')
       return
     }
 
+    if (ws.current?.readyState === WebSocket.CONNECTING) {
+      console.log('⏳ WebSocket already connecting')
+      return
+    }
+
+    // Clean up any existing connection
+    if (ws.current) {
+      ws.current.close()
+      ws.current = null
+    }
+
+    console.log('🔄 Setting status to connecting')
     setConnectionStatus('connecting')
+    setIsConnected(false)
     
     try {
-      ws.current = new WebSocket(wsUrl)
+      console.log('🆕 Creating new WebSocket to:', wsUrl)
+      const websocket = new WebSocket(wsUrl)
+      ws.current = websocket
 
-      ws.current.onopen = () => {
-        console.log('WebSocket connected')
+      const connectTimeout = setTimeout(() => {
+        console.log('⏰ Connection timeout - closing WebSocket')
+        websocket.close()
+        setConnectionStatus('disconnected')
+      }, 10000) // 10 second timeout
+
+      websocket.onopen = (event) => {
+        console.log('✅ WebSocket OPENED successfully!', event)
+        clearTimeout(connectTimeout)
         setIsConnected(true)
         setConnectionStatus('connected')
         
@@ -39,38 +66,48 @@ export function useWebSocket() {
         }
       }
 
-      ws.current.onmessage = (event) => {
+      websocket.onmessage = (event) => {
         try {
           const message: WebSocketMessage = JSON.parse(event.data)
           setLastMessage(message)
-          console.log('WebSocket message received:', message)
+          console.log('📨 WebSocket message received:', message)
         } catch (error) {
-          console.error('Failed to parse WebSocket message:', error)
+          console.error('❌ Failed to parse WebSocket message:', error)
+          console.log('📄 Raw message data:', event.data)
         }
       }
 
-      ws.current.onclose = (event) => {
-        console.log('WebSocket disconnected:', event.code, event.reason)
+      websocket.onclose = (event) => {
+        console.log('🔌 WebSocket CLOSED:', {
+          code: event.code,
+          reason: event.reason,
+          wasClean: event.wasClean
+        })
+        clearTimeout(connectTimeout)
         setIsConnected(false)
         setConnectionStatus('disconnected')
         
-        // Auto-reconnect after 5 seconds if not manually disconnected
-        if (event.code !== 1000) {
+        // Auto-reconnect for unexpected closures
+        if (event.code !== 1000 && event.code !== 1001) {
+          console.log('🔄 Scheduling reconnection in 3 seconds...')
           reconnectTimeoutRef.current = setTimeout(() => {
-            console.log('Attempting to reconnect...')
+            console.log('🔄 Attempting to reconnect...')
             connect()
-          }, 5000)
+          }, 3000)
         }
       }
 
-      ws.current.onerror = (error) => {
-        console.error('WebSocket error:', error)
+      websocket.onerror = (error) => {
+        console.error('❌ WebSocket ERROR:', error)
+        clearTimeout(connectTimeout)
         setConnectionStatus('disconnected')
+        setIsConnected(false)
       }
 
     } catch (error) {
-      console.error('Failed to create WebSocket connection:', error)
+      console.error('❌ Failed to create WebSocket:', error)
       setConnectionStatus('disconnected')
+      setIsConnected(false)
     }
   }, [wsUrl])
 
