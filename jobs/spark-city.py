@@ -87,6 +87,8 @@ def main():
                 .format("kafka")
                 .option("kafka.bootstrap.servers", 'broker:29092')
                 .option("subscribe", topic)
+                .option("failOnDataLoss", "false")  # For development - handle topic resets
+                .option("startingOffsets", "latest")  # Start from latest data
                 .load()
                 .selectExpr("CAST(value AS STRING)")
                 .select(from_json(col("value"), schema).alias("data"))
@@ -97,6 +99,9 @@ def main():
         try:
             import redis
             r = redis.Redis(host='redis', port=6379, decode_responses=True)
+            
+            # Test connection first
+            r.ping()
             
             # Convert to list for processing
             rows = df.collect()
@@ -130,8 +135,10 @@ def main():
                         
             print(f"✅ Batch {epoch_id}: Wrote {len(rows)} records to Redis")
             
+        except ImportError:
+            print(f"⚠️ Batch {epoch_id}: Redis module not available - skipping Redis writes")
         except Exception as e:
-            print(f"❌ Error writing batch {epoch_id} to Redis: {e}")
+            print(f"⚠️ Batch {epoch_id}: Redis unavailable ({e}) - continuing with S3 only")
 
     def dual_stream_writer(input_df: DataFrame, checkpoint_folder, s3_output, redis_enabled=True):
         """Write to both S3 (batch layer) and Redis (speed layer)"""
