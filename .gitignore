@@ -1,3 +1,71 @@
-venv/
+# Dependencies
+dashboard/node_modules/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Next.js
+dashboard/.next/
+dashboard/out/
+
+# Production
+dashboard/build/
+
+# Environment variables
+.env*.local
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+build/
+develop-eggs/
 dist/
-test/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# Docker
+.dockerignore
+
+# Logs
+logs/
+*.log
+
+# Testing
+.coverage
+.nyc_output
+
+# Package lock files (optional)
+package-lock.json
+yarn.lock
