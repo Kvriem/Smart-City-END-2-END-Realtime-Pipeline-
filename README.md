@@ -30,15 +30,15 @@ This project addresses these challenges through:
 - **Cloud Architecture**: AWS S3 + Snowflake + Airflow orchestration
 
 #### 🧠 **Advanced Data Modeling**
-- **Star Schema**: Optimized for OLAP and BI tool integration
+- **Star Schema**: Optimized for OLAP and analytical workloads
 - **Time Dimensions**: Comprehensive temporal analytics capabilities
 - **Slowly Changing Dimensions**: Historical data preservation and tracking
 - **Fact Tables**: High-performance aggregations and metrics
 
-#### 📱 **Business Intelligence Ready**
-- **Power BI Integration**: Direct Snowflake connector support
+#### 📱 **Analytics Ready**
 - **Interactive Dashboards**: Real-time city operations monitoring
-- **Self-Service Analytics**: Drag-and-drop report building
+- **RESTful APIs**: Direct data access for custom applications
+- **WebSocket Integration**: Live data streaming capabilities
 - **Mobile Responsive**: Field operations support
 
 ## 🏗️ Pipeline Architecture
@@ -85,10 +85,10 @@ Our architecture follows **modern data warehouse patterns**, designed for:
 - **Performance**: Sub-second query response times
 
 #### 4. **📊 Analytics & Visualization**
-- **BI Tools**: Power BI, Tableau, Looker integration
-- **Dashboards**: Pre-built city operations dashboards
 - **APIs**: RESTful endpoints for custom applications
+- **Dashboards**: Web-based city operations monitoring
 - **Real-time**: WebSocket integration for live updates
+- **Export Capabilities**: Data export for external analysis
 
 
 ## ✨ Key Features
@@ -132,12 +132,12 @@ Our architecture follows **modern data warehouse patterns**, designed for:
 - **Correlation Analysis**: Multi-domain pattern recognition
 - **Operational Metrics**: KPI dashboards and alerting
 
-### 📱 **Business Intelligence Integration**
-- **Power BI Ready**: Direct Snowflake connector
-- **Self-Service Analytics**: Drag-and-drop report building
-- **Mobile Dashboards**: Responsive design for field operations
+### 📱 **Analytics Integration**
+- **RESTful APIs**: Direct Snowflake data access
+- **Custom Dashboards**: Web-based analytics interface
+- **Data Export**: CSV/JSON formats for external tools
 - **Real-time Updates**: Live data refresh capabilities
-- **Custom Reports**: Flexible reporting framework
+- **Mobile Access**: Responsive design for field operations
 
 ![Interactive Dashboard](assets/Interactive_map.png)
 
@@ -283,9 +283,9 @@ GROUP BY dit.INCIDENT_CATEGORY, dl.DISTRICT;
 | `/api/vehicles/metrics` | GET | Fleet performance metrics |
 | `/api/emergency/trends` | GET | Emergency response analytics |
 
-### 📊 **Business Intelligence Integration**
+### 📊 **Data Access & Integration**
 
-#### **Power BI Connection**
+#### **Direct Snowflake Access**
 ```
 Server: <your-snowflake-account>.snowflakecomputing.com
 Database: SMART_CITY_DW
@@ -293,12 +293,11 @@ Schema: DIMENSIONAL_MODEL
 Authentication: Username/Password
 ```
 
-#### **Tableau Connection**
-```
-Connection Type: Snowflake
-Server: <your-snowflake-account>.snowflakecomputing.com
-Database: SMART_CITY_DW
-Schema: DIMENSIONAL_MODEL
+#### **API Integration**
+```bash
+# Example API usage
+curl -X GET "http://localhost:8000/api/analytics/summary"
+curl -X GET "http://localhost:8000/api/vehicles/metrics"
 ```
 
 ## 🧪 Testing & Validation
@@ -444,9 +443,9 @@ AIRFLOW__CORE__LOAD_EXAMPLES=false
 
 This Smart City Analytics Pipeline is a **complete, production-ready solution** featuring:
 - **Modern Data Architecture**: Cloud-native, scalable design
-- **Advanced Analytics**: Star schema optimized for BI tools
+- **Advanced Analytics**: Star schema optimized for analytical queries
 - **Operational Excellence**: Monitoring, alerting, and error recovery
-- **Business Integration**: Ready for Power BI, Tableau, and custom apps
+- **API Integration**: Ready for custom applications and external tools
 
 ---
 
