@@ -1,8 +1,3 @@
-"""
-Smart City Real-Time API Layer
-Provides access to both speed layer (Redis) and batch layer (S3) data
-"""
-
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
