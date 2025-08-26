@@ -90,29 +90,6 @@ Our architecture follows **modern data warehouse patterns**, designed for:
 - **APIs**: RESTful endpoints for custom applications
 - **Real-time**: WebSocket integration for live updates
 
-### 🚀 **Data Processing Workflow**
-
-```mermaid
-graph LR
-    A[🌍 Smart City IoT Sensors] --> B[📁 AWS S3 Data Lake]
-    B --> C[🔄 Airflow ETL Pipeline]
-    C --> D[📊 Snowflake Raw Schema]
-    D --> E[⭐ Star Schema Transform]
-    E --> F[🏗️ Dimensional Warehouse]
-    F --> G[📱 Power BI Dashboard]
-    F --> H[🌐 Real-time API]
-    H --> I[📊 Interactive Map]
-    
-    style A fill:#e1f5fe
-    style B fill:#f3e5f5
-    style C fill:#e8f5e8
-    style D fill:#fff3e0
-    style E fill:#fce4ec
-    style F fill:#e3f2fd
-    style G fill:#f1f8e9
-    style H fill:#fff8e1
-    style I fill:#fafafa
-```
 
 ## ✨ Key Features
 
