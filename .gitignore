@@ -69,3 +69,5 @@ logs/
 # Package lock files (optional)
 package-lock.json
 yarn.lock
+
+.env/
